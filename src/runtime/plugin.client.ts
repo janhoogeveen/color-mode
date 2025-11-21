@@ -13,7 +13,7 @@ type Helper = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let helper = window[globalName as any] as unknown as Helper
+let helper = window[globalName as any] as unknown as (Helper | undefined)
 
 // Initialise to object with defaults and no-ops to avoid hard error when hydrating app in test mode
 if (import.meta.test && !helper) {
@@ -24,6 +24,10 @@ if (import.meta.test && !helper) {
     addColorScheme: () => {},
     removeColorScheme: () => {},
   }
+}
+
+if (typeof helper === 'undefined') {
+  throw new TypeError('[nuxt-color-mode] Color mode helper is not available on window object. This should never happen.')
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
