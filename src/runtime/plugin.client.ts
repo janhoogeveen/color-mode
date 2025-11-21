@@ -16,7 +16,7 @@ type Helper = {
 let helper = window[globalName as any] as unknown as (Helper | undefined)
 
 // Initialise to object with defaults and no-ops to avoid hard error when hydrating app in test mode
-if (import.meta.test && !helper) {
+if (!helper) {
   helper = {
     preference: 'light',
     value: 'light',
@@ -71,7 +71,12 @@ export default defineNuxtPlugin((nuxtApp) => {
       return
     }
 
+    if (!helper) {
+      return
+    }
+
     darkWatcher = window.matchMedia('(prefers-color-scheme: dark)')
+
     darkWatcher.addEventListener('change', () => {
       if (!colorMode.forced && colorMode.preference === 'system') {
         setColorModeValue(colorMode, helper.getColorScheme())
